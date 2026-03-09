@@ -9,7 +9,7 @@ function Home() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/items");
+        const response = await fetch("http://localhost:5001/api/items");
         const data = await response.json();
         setItems(data);
         setLoading(false);

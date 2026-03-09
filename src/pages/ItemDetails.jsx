@@ -9,7 +9,7 @@ function ItemDetails() {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/items/${id}`);
+        const response = await fetch(`http://localhost:5001/api/items/${id}`);
         if(response.ok) {
           const data = await response.json();
           setItem(data);
