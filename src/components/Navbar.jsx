@@ -1,8 +1,20 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    setUserEmail(localStorage.getItem("userEmail") || "");
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userEmail");
+    setUserEmail("");
+    navigate("/");
+  };
 
   const isActive = (path) => {
     return location.pathname === path ? "text-primary-600 font-semibold" : "text-slate-600 hover:text-primary-600";
@@ -25,9 +37,23 @@ function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link to="/login" className="px-5 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-full shadow-lg shadow-primary-600/30 transition-all hover:shadow-primary-600/50 hover:-translate-y-0.5">
-            Login
-          </Link>
+          {userEmail ? (
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-slate-600 hidden sm:block">
+                {userEmail}
+              </span>
+              <button 
+                onClick={handleLogout}
+                className="px-5 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:text-primary-600 rounded-full shadow-sm transition-all"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="px-5 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-full shadow-lg shadow-primary-600/30 transition-all hover:shadow-primary-600/50 hover:-translate-y-0.5">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>

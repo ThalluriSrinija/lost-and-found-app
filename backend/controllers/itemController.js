@@ -37,9 +37,9 @@ export const getItemById = async (req, res) => {
 // @access  Public
 export const createItem = async (req, res) => {
   try {
-    const { title, description, type, date, location, contact, imageUrl } = req.body;
+    const { title, description, type, date, location, contact, imageUrl, userEmail } = req.body;
 
-    if (!title || !description || !type || !date || !location || !contact) {
+    if (!title || !description || !type || !date || !location || !contact || !userEmail) {
       return res.status(400).json({ message: "Please provide all required fields" });
     }
 
@@ -51,10 +51,28 @@ export const createItem = async (req, res) => {
       location,
       contact,
       imageUrl,
+      userEmail,
     });
 
     const createdItem = await item.save();
     res.status(201).json(createdItem);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+// @desc    Delete an item
+// @route   DELETE /api/items/:id
+// @access  Public
+export const deleteItem = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    
+    await Item.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Item removed" });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }

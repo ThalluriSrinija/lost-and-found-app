@@ -31,6 +31,10 @@ const itemSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    userEmail: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

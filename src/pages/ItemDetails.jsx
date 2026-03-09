@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 function ItemDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const currentUserEmail = localStorage.getItem("userEmail");
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -22,6 +25,26 @@ function ItemDetails() {
     };
     fetchItem();
   }, [id]);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to mark this item as resolved? It will be permanently deleted.")) return;
+    
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`http://localhost:5001/api/items/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        navigate("/");
+      } else {
+        console.error("Failed to delete item");
+        setIsDeleting(false);
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      setIsDeleting(false);
+    }
+  };
 
   if (loading) return (
     <div className="min-h-screen bg-slate-50 flex justify-center items-center">
@@ -129,6 +152,16 @@ function ItemDetails() {
                   >
                     Get in Touch
                   </a>
+
+                  {currentUserEmail === item.userEmail && (
+                    <button
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className={`mt-4 flex justify-center items-center px-4 py-3 border border-red-200 rounded-xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all w-full ${isDeleting ? 'opacity-75 cursor-not-allowed' : ''}`}
+                    >
+                      {isDeleting ? 'Deleting...' : 'Mark as Resolved (Delete)'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ReportFound() {
@@ -13,6 +13,12 @@ function ReportFound() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  useEffect(() => {
+    if (!localStorage.getItem("userEmail")) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errorMsg) setErrorMsg("");
@@ -26,7 +32,7 @@ function ReportFound() {
       const response = await fetch("http://localhost:5001/api/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, type: "found" }),
+        body: JSON.stringify({ ...formData, type: "found", userEmail: localStorage.getItem("userEmail") }),
       });
       if (response.ok) {
         navigate("/");

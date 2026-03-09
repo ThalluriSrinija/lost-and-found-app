@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email) {
+      localStorage.setItem("userEmail", email);
+      navigate("/");
+      // Force a reload to update the Navbar state across the app
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-12 flex items-center justify-center bg-slate-50 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative background elements */}
@@ -15,7 +29,7 @@ function Login() {
             </p>
           </div>
 
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
                 Email address
@@ -27,6 +41,8 @@ function Login() {
                   type="email"
                   autoComplete="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors sm:text-sm bg-white/50 backdrop-blur-sm"
                   placeholder="you@university.edu"
                 />
