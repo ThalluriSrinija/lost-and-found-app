@@ -5,6 +5,9 @@ import ItemCard from "../components/ItemCard";
 function Home() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  const filteredItems = filter === 'all' ? items : items.filter(item => item.type?.toLowerCase() === filter);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -57,9 +60,24 @@ function Home() {
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Recent Reports</h2>
           <div className="flex gap-2">
-            <span className="px-3 py-1 rounded-full bg-white border border-slate-200 text-sm font-medium text-slate-600 shadow-sm">All</span>
-            <span className="px-3 py-1 rounded-full bg-slate-100 border border-transparent text-sm font-medium text-slate-500 hover:bg-slate-200 cursor-pointer transition-colors">Lost</span>
-            <span className="px-3 py-1 rounded-full bg-slate-100 border border-transparent text-sm font-medium text-slate-500 hover:bg-slate-200 cursor-pointer transition-colors">Found</span>
+            <button 
+              onClick={() => setFilter('all')}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all shadow-sm border ${filter === 'all' ? 'bg-white text-slate-900 border-slate-200' : 'bg-slate-100 text-slate-500 border-transparent hover:bg-slate-200'}`}
+            >
+              All
+            </button>
+            <button 
+              onClick={() => setFilter('lost')}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all shadow-sm border ${filter === 'lost' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-100 text-slate-500 border-transparent hover:bg-slate-200'}`}
+            >
+              Lost
+            </button>
+            <button 
+              onClick={() => setFilter('found')}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all shadow-sm border ${filter === 'found' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-100 text-slate-500 border-transparent hover:bg-slate-200'}`}
+            >
+              Found
+            </button>
           </div>
         </div>
 
@@ -67,17 +85,17 @@ function Home() {
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
           </div>
-        ) : items.length === 0 ? (
+        ) : filteredItems.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 border-dashed">
             <svg className="mx-auto h-12 w-12 text-slate-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
             </svg>
-            <h3 className="text-lg font-medium text-slate-900">No items reported</h3>
-            <p className="mt-1 text-sm text-slate-500">Check back later or be the first to report an item.</p>
+            <h3 className="text-lg font-medium text-slate-900">No items found</h3>
+            <p className="mt-1 text-sm text-slate-500">Check back later or try changing your filter.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {items.map(item => (
+            {filteredItems.map(item => (
               <ItemCard key={item._id} item={item} />
             ))}
           </div>
