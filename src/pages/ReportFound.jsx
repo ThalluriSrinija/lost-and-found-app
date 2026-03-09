@@ -11,14 +11,17 @@ function ReportFound() {
     date: new Date().toISOString().split('T')[0],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errorMsg) setErrorMsg("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMsg("");
     try {
       const response = await fetch("http://localhost:5000/api/items", {
         method: "POST",
@@ -29,10 +32,12 @@ function ReportFound() {
         navigate("/");
       } else {
         console.error("Failed to report item");
+        setErrorMsg("Failed to submit the form. Please try again.");
         setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      setErrorMsg("Cannot connect to the backend server. Please make sure it's running.");
       setIsSubmitting(false);
     }
   };
@@ -49,6 +54,21 @@ function ReportFound() {
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 sm:p-10 space-y-8">
+            {errorMsg && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700 font-medium">{errorMsg}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 gap-y-6 gap-x-8 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label htmlFor="title" className="block text-sm font-semibold text-slate-700 mb-2">Item Name</label>
